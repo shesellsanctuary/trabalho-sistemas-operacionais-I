@@ -70,4 +70,6 @@ test_process: $(TEST_OBJ) $(OBJ)
 # Cleaning rule
 clean:
 	@echo "Cleaning"
+	@mv $(BIN_DIR)/support.o $(BIN_DIR)/support.bkp 
 	@rm -rf $(LIB_DIR)/*.a $(BIN_DIR)/*.o $(SRC_DIR)/*~ $(INC_DIR)/*~ *~
+	@mv $(BIN_DIR)/support.bkp $(BIN_DIR)/support.o 
