@@ -1,8 +1,8 @@
 // We use this to avoid multiple main definitions
-#ifdef 
+#ifdef TEST
 // Here we call the runAllTests function defined in testMain
 #include <stdio.h>
-#include "sourceExample.h"
+#include "testMain.h"
 
 int main(int argc, char* argv[])
 {

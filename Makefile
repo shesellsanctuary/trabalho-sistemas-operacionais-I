@@ -44,15 +44,19 @@ executable: $(OBJ)
 ./bin/%.o: ./src/%.c
 	@mkdir -p $(BIN_DIR)
 	@echo "Compiling" $@ 
-	@$(CC) -o $@ -c $< $(CFLAGS) $(FLAGS) $(TESTFLAG)
+	@$(CC) -o $@ -c $< $(CFLAGS) $(FLAGS)
 
 # To use when finishing the assignment
 delivery: $(OBJ)
 	@echo "Delivery Mode"
 	@ar crs $(LIB_DIR)libcthread.a $(OBJ)
 
-# Generate the test executable
-tests: $(TEST_OBJ) $(OBJ)
+# Manage the flags for the test mode
+tests: FLAGS += $(DBFLAGS)
+tests: FLAGS += $(TESTFLAG)
+tests: test_process
+# Generate the test executable in debug mode
+test_process: $(TEST_OBJ) $(OBJ)
 	@echo "Linking Tests" $(TEST_EXE)
 # Need to delete main.o to avoid multiple mains
 	@$(CC) -o $(TEST_EXE) $(TEST_OBJ) $(OBJ)
@@ -61,7 +65,7 @@ tests: $(TEST_OBJ) $(OBJ)
 ./bin/%.o: ./tests/%.c
 	@echo "Compiling Test" $@ 
 	@mkdir -p $(BIN_DIR)
-	@$(CC) -o $@ -c $< $(CFLAGS) $(FLAGS) $(TESTFLAG)
+	@$(CC) -o $@ -c $< $(CFLAGS) $(FLAGS)
 
 # Cleaning rule
 clean:
