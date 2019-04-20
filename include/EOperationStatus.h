@@ -7,7 +7,8 @@ typedef enum EOperationStatus
 	OpSuccess = 0, // Operation was successfull
 	OpUknownError = -1, // Uknown error
 	OpAllocError = -2, // Malloc could not allocate memory
-	OpNullStructError = -3 // Null struct received
+	OpNullStructError = -3, // Null struct received
+	OpDeleteError = -4 // Error deleting element from list
 } EOperationStatus;
 
 #endif // !EOPERATIONSTATUS_H

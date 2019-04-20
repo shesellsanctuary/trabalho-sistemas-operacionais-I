@@ -3,6 +3,7 @@
 #include "testMain.h"
 #include "testExample.h"
 #include "testCSem_Init.h"
+#include "testCSignal.h"
 #include "sourceExample.h"
 
 ETestStatus runAllTests()
@@ -14,9 +15,25 @@ ETestStatus runAllTests()
 
 	// csem_init test
 	// Currently running test 
-	printf("testExampleSuccess:\t");
+	printf("csem_init_test:\t");
 	// Run the test
 	currentTestStatus = csem_init_test();
+	// Check if test runned successfully
+	if (currentTestStatus != TestSuccess)
+	{
+		overallTestStatus -= TestError;
+		printf("FAILED\n");
+	}
+	else
+	{
+		printf("SUCCESS\n");
+	}
+
+	// csignal test
+	// Currently running test 
+	printf("csignal_test:\t");
+	// Run the test
+	currentTestStatus = csignal_test();
 	// Check if test runned successfully
 	if (currentTestStatus != TestSuccess)
 	{
