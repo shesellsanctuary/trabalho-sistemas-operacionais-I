@@ -2,47 +2,37 @@
 #include "ETestStatus.h"
 #include "testMain.h"
 #include "testExample.h"
+#include "csem_initTest.h"
 #include "sourceExample.h"
 
 ETestStatus runAllTests()
 {
-	// Test status variable
-	ETestStatus testStatus = Success;
+	// All tests variable
+	ETestStatus overallTestStatus = TestSuccess;
+	// Current test variable
+	ETestStatus currentTestStatus = TestSuccess;
 
-	// Example on how to run and check the tests (when it works)
-	printf("testExampleSuccess: 5 * 6 = %d\t", testExampleSuccess(5, 6));
-	if (testExampleSuccess(5, 6) != 30)
+	// csem_init test
+	// Currently running test 
+	printf("testExampleSuccess:\t");
+	// Run the test
+	currentTestStatus = csem_init_test();
+	// Check if test runned successfully
+	if (currentTestStatus != TestSuccess)
 	{
-		testStatus = TestError;
-		printf("FAILED\tCODE = %d\n", testStatus);
-	}
-	else
-	{
-		printf("SUCCESS\n");
-	}
-	// Example on how to run and check the tests (when it doesn't works)
-	// Purposefully making a error, calling the function that sums when I expect it to multiply
-	printf("testExampleFailure: 2 * 3 = %d\t", testExampleFailure(2, 3));
-	if (testExampleFailure(2, 3) != 6)
-	{
-		testStatus = TestError;
-		printf("FAILED\tCODE = %d\n", testStatus);
-	}
-	else
-	{
-		printf("SUCCESS\n");
-	}
-	// Example on how to run a function from a file in the src folder
-	printf("example: 1 + 2 = %d\t", example(1, 2));
-	if (example(1, 2) != 3)
-	{
-		testStatus = TestError;
-		printf("FAILED\tCODE = %d\n", testStatus);
+		overallTestStatus -= TestError;
+		printf("FAILED\n");
 	}
 	else
 	{
 		printf("SUCCESS\n");
 	}
 
-	return testStatus;
+	// If any test failed
+	if (overallTestStatus != 0)
+	{
+		printf("Number of failed tests: %d\n", overallTestStatus);
+	}
+
+	return overallTestStatus;
 }

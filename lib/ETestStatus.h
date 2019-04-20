@@ -4,7 +4,7 @@
 // Enum for test status, its easier this way to keep return numbers meaningful
 typedef enum ETestStatus
 {
-	Success = 0, // Test was successfull
+	TestSuccess = 0, // Test was successfull
 	TestError = -1 // Test failure
 } ETestStatus;
 

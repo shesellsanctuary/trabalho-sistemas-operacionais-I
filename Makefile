@@ -7,7 +7,7 @@ BIN_DIR=./bin/
 SRC_DIR=./src/
 TEST_DIR=./tests/
 # Flags
-CFLAGS=-I./lib/
+CFLAGS=-I$(LIB_DIR) -I$(INC_DIR)
 DBFLAGS=-ggdb3 -O0 -g -Wall -Werror
 RELEASEFLAGS=-O2
 TESTFLAG=-D TEST
@@ -25,12 +25,14 @@ all: release
 
 # Release flags and stuff
 release: FLAGS += $(RELEASEFLAGS)
+release: OBJ += ./bin/support.o
 release:
 	@echo "Release Build"
 release: executable
 
 # Debug flags and stuff
 debug: FLAGS += $(DBFLAGS)
+debug: OBJ += ./bin/support.o
 debug:
 	@echo "Debug Build"
 debug: executable
@@ -47,6 +49,7 @@ executable: $(OBJ)
 	@$(CC) -o $@ -c $< $(CFLAGS) $(FLAGS)
 
 # To use when finishing the assignment
+delivery: OBJ += ./bin/support.o
 delivery: $(OBJ)
 	@echo "Delivery Mode"
 	@ar crs $(LIB_DIR)libcthread.a $(OBJ)
@@ -54,6 +57,7 @@ delivery: $(OBJ)
 # Manage the flags for the test mode
 tests: FLAGS += $(DBFLAGS)
 tests: FLAGS += $(TESTFLAG)
+tests: OBJ += ./bin/support.o
 tests: test_process
 # Generate the test executable in debug mode
 test_process: $(TEST_OBJ) $(OBJ)
