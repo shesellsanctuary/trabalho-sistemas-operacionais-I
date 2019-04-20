@@ -3,6 +3,7 @@
 #include "cthread.h"
 #include "ETestStatus.h"
 #include "EOperationStatus.h"
+#include "testCSem_Init.h"
 
 ETestStatus csem_init_test()
 {

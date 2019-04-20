@@ -2,7 +2,7 @@
 #include "ETestStatus.h"
 #include "testMain.h"
 #include "testExample.h"
-#include "csem_initTest.h"
+#include "testCSem_Init.h"
 #include "sourceExample.h"
 
 ETestStatus runAllTests()

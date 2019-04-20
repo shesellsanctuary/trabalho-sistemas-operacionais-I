@@ -22,7 +22,7 @@ csem_init(csem_t *sem, int count)
 	// Operation status to be returned
 	EOperationStatus returnCode = OpUknownError;
 
-	// If allocation was successfull
+	// If semaphore is a valid struct
 	if (sem != NULL)
 	{
 		// sets semaphore counter
