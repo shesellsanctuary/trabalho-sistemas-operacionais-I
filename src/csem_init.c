@@ -9,6 +9,9 @@
 #include "EOperationStatus.h"
 #include "support.h"
 
+// Number of threads variable
+extern int g_numOfThreads;
+
 /******************************************************************************
 Parâmetros:
 	sem:	ponteiro para uma variável do tipo csem_t. Aponta para uma estrutura de dados que representa a variável semáforo.

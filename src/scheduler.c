@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include "scheduler.h"
 
+// Defining the variable
+int g_numOfThreads = 0;
+
+// Initialize the library
 EOperationStatus initialize()
 {
 	// Return code

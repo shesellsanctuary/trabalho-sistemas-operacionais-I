@@ -15,7 +15,7 @@ PFILA2 g_blockedQueue;
 PFILA2 g_executingThread;
 
 // Number of total threads created since the beginning 
-int g_numOfThreads = 0;
+int g_numOfThreads;
 
 // Initialize the library and its queues and necessary stuff
 EOperationStatus initialize();

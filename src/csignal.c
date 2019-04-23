@@ -8,6 +8,16 @@
 #include "cdata.h"
 #include "EOperationStatus.h"
 
+// Number of threads variable
+extern int g_numOfThreads;
+
+/******************************************************************************
+Parâmetros:
+	sem:	ponteiro para uma variável do tipo semáforo.
+Retorno:
+	Quando executada corretamente: retorna 0 (zero)
+	Caso contrário, retorna um valor negativo.
+******************************************************************************/
 int
 csignal(csem_t *sem)
 {
@@ -37,6 +47,7 @@ csignal(csem_t *sem)
 				currThread->state = PROCST_APTO;
 
 				// TODO change from blocked list to ready list
+				
 				// Search in the blocked queue
 				// If found, move to the ready queue
 				// Else all is fine (sortof)
