@@ -1,6 +1,5 @@
 .vscode
 *.o
-/bin/
 *~
 *.a
 *.vcxproj
