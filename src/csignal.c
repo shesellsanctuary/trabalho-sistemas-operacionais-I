@@ -6,6 +6,7 @@
 #include "scheduler.h"
 #include "cthread.h"
 #include "cdata.h"
+#include "utils.h"
 #include "EOperationStatus.h"
 
 // Number of threads variable
@@ -46,14 +47,19 @@ csignal(csem_t *sem)
 				// Changes thread state to ready
 				currThread->state = PROCST_APTO;
 
-				// TODO change from blocked list to ready list
-				
-				// Search in the blocked queue
-				// If found, move to the ready queue
-				// Else all is fine (sortof)
+				// Move the thread between queues
+				// If search operation was successfull and found the thread in the queue
+				if ((SearchThreadFila2(g_blockedQueue, currThread->tid) == OpSuccess) &&
+					(g_blockedQueue->it != NULL))
+				{
+					// Remove from the blocked queue
+					DeleteAtIteratorFila2(g_blockedQueue);
+					// Insert in the ready queue
+					returnCode = appendThreadToReadyQueue(currThread);
+				}
 
 				// Remove the first element
-				if (DeleteAtIteratorFila2(sem->fila) != 0)
+				if ((returnCode == OpSuccess) && (DeleteAtIteratorFila2(sem->fila) != 0))
 				{
 					// Delete error
 					returnCode = OpDeleteError;
@@ -63,6 +69,11 @@ csignal(csem_t *sem)
 					// Updates return code
 					returnCode = OpSuccess;
 				}
+			}
+			// Couldnt position to first
+			else
+			{
+				returnCode = OpUknownError;
 			}
 		}
 		else
