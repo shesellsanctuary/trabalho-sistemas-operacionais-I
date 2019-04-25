@@ -24,6 +24,10 @@ ETestStatus cidentify_test()
       names[i] = 'T';
     }
 
-    cidentify(names, MAX_SIZE);
+    if (cidentify(names, MAX_SIZE) != 0)
+	{
+		testStatus = TestError;
+	}
+
 	return testStatus;
 }

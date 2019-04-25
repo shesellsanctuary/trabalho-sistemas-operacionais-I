@@ -3,6 +3,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "scheduler.h"
 #include "cthread.h"
 #include "cdata.h"
@@ -26,30 +27,24 @@ cwait(csem_t *sem)
 		// If allocation was successfull
 		if (sem != NULL)
 		{
-			// Initializing iterator
-			if (FirstFila2(sem->fila) == 0)
+			// Check if resource is free
+			// If count is <= 0 put thread on blocked state and on resource wait list 
+			if (sem->count <=0)
 			{
-				// Gets the current node
-				TCB_t* currThread = (TCB_t*)sem->fila->it->node;
-
-                // Check if resource is free
-                // If count is <= 0 put thread on blocked state and on resource wait list 
-                if (sem->count <=0)
-                {
-                    // Changes thread state to blocked
-                    currThread->state = PROCST_BLOQ;
-                    // Add thread to end of queue
-                    AppendFila2(sem->fila, currThread);
-                    returnCode = OpSuccess;
-                }
-                else
-                {
-                // If it is free, put it to thread and continue
-				// Request resource
-				sem->count--;
-                returnCode = OpSuccess;                    
-                }
-
+				TCB_t* thread = (TCB_t*)g_executingThread->first->node;
+				// Changes thread state to blocked
+				thread->state = PROCST_BLOQ;
+				
+				// Add thread to end of queue
+				AppendFila2(sem->fila, thread);
+				returnCode = OpSuccess;
+			}
+			else
+			{
+			// If it is free, put it to thread and continue
+			// Request resource
+			sem->count--;
+			returnCode = OpSuccess;                    
 			}
 		}
 		else

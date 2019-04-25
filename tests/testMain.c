@@ -5,6 +5,7 @@
 #include "testCSem_Init.h"
 #include "testCSignal.h"
 #include "testCIdentify.h"
+#include "testCWait.h"
 #include "sourceExample.h"
 
 ETestStatus runAllTests()
@@ -51,6 +52,22 @@ ETestStatus runAllTests()
 	printf("cidentify_test:\t");
 	// Run the test
 	currentTestStatus = cidentify_test();
+	// Check if test runned successfully
+	if (currentTestStatus != TestSuccess)
+	{
+		overallTestStatus -= TestError;
+		printf("FAILED\n");
+	}
+	else
+	{
+		printf("SUCCESS\n");
+	}
+
+	// cwait test
+	// Currently running test
+	printf("cwait_test:\t");
+	// Run the test
+	currentTestStatus = cwait_test();
 	// Check if test runned successfully
 	if (currentTestStatus != TestSuccess)
 	{
