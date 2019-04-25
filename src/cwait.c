@@ -38,6 +38,8 @@ cwait(csem_t *sem)
 				// Add thread to end of queue
 				AppendFila2(sem->fila, thread);
 				returnCode = OpSuccess;
+
+				//TODO:Call change of context to fetch next thread to execute
 			}
 			else
 			{

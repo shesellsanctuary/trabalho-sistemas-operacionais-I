@@ -10,7 +10,8 @@ typedef enum EOperationStatus
 	OpNullStructError = -3, // Null struct received
 	OpDeleteError = -4, // Error deleting element from list
 	OpInvalidPriorityError = -5, // Invalid thread priority found
-	OpAppendError = -6 // Could not append to queue
+	OpAppendError = -6, // Could not append to queue
+	OpInvalidPrio = -7 // Invalid priority
 } EOperationStatus;
 
 #endif // !EOPERATIONSTATUS_H
