@@ -52,7 +52,7 @@ ETestStatus csignal_test()
 	// Test code
 
 	// Issues two signals
-	if ((csignal(pSem) != OpSuccess))
+	if ((csignal(pSem) != OpSuccess) || (csignal(pSem) != OpSuccess))
 	{
 		testStatus = TestError;
 	}
@@ -82,7 +82,7 @@ ETestStatus csignal_test()
 		}
 		// We should have one thread in the ready queue and the other 9 blocked
 		if ((testStatus != TestError) && 
-			((GetSizeFila2(g_blockedQueue) != (cNumOfThreads - 1)) || (GetSizeFila2((PFILA2)g_HighPrioReadyQueue) != 1)))
+			((GetSizeFila2(g_blockedQueue) != (cNumOfThreads - 2)) || (GetSizeFila2((PFILA2)g_HighPrioReadyQueue) != 2)))
 		{ 
 			testStatus = TestError;
 		}
