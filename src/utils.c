@@ -50,6 +50,7 @@ EOperationStatus SearchThreadFila2(PFILA2 queue, int content)
 	return retStatus;
 }
 
+// Gets the size of a queue, returns 0 for NULL
 int GetSizeFila2(PFILA2 queue)
 {
 	// Size of the queue

@@ -29,4 +29,14 @@ EOperationStatus initialize();
 // Appends to the right ready queue
 EOperationStatus appendThreadToReadyQueue(TCB_t* threadToAppend);
 
+// Dispatcher
+// Move the first ready thread with the highest priority to the executing queue
+// Should only be used after the queues have been initialized
+// This function should not remove the executing thread, as it is non preemptive
+// The user should swapcontext after its use
+EOperationStatus dispatch();
+
+// Sets the iterator to the first available thread from the ready queue
+EOperationStatus GetFirstReadyThread(PFILA2* queueReference);
+
 #endif // !SCHEDULER_H

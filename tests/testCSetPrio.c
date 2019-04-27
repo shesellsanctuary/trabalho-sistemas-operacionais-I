@@ -27,8 +27,7 @@ ETestStatus csetprio_test()
 	{
 		//nothing
 	}
-    int newPrio = (int) ThreadLowPriority;
-    if (csetprio(NULL, newPrio) != 0)
+    if (csetprio(0, ThreadLowPriority) != 0)
 	{
 		testStatus = TestError;
 	}

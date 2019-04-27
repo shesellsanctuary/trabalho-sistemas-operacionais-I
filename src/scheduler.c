@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "scheduler.h"
 #include "EThreadPriority.h"
+#include "TBool.h"
 
 // Defining the variable
 int g_numOfThreads = 0;
@@ -46,7 +47,12 @@ EOperationStatus initialize()
 	// Initializes tid count
 	g_numOfThreads = 1;
 
-	// TODO
+	// Initialize main thread
+	//TCB_t mainThread;
+	//mainThread.tid = MAIN_TID;
+	//mainThread.context = 
+
+	// Call dispatcher for the main thread
 
 	return returnCode;
 }
@@ -92,6 +98,80 @@ EOperationStatus appendThreadToReadyQueue(TCB_t* threadToAppend)
 	}
 	else
 	{
+		returnCode = OpNullStructError;
+	}
+
+	return returnCode;
+}
+
+// Dispatcher
+// Move the first ready thread with the highest priority to the executing queue
+// Should only be used after the queues have been initialized
+// This function should not remove the executing thread, as it is non preemptive
+// The user should swapcontext after its use
+EOperationStatus dispatch()
+{
+	// Return code
+	EOperationStatus returnCode = OpUknownError;
+	// Queue which contains the thread
+	PFILA2 readyQueue = NULL;
+
+	// Get the first ready thread
+	if (GetFirstReadyThread(&readyQueue) != OpUknownError)
+	{
+		// Add to executing queue and delete from ready queue
+		if (AppendFila2(g_executingThread, readyQueue->it) == 0)
+		{
+			// Change thread state to executing, there should be only 1 here
+			((TCB_t*)g_executingThread->first->node)->state = PROCST_EXEC;
+			if (DeleteAtIteratorFila2(readyQueue) == 0)
+			{
+				returnCode = OpSuccess;
+			}
+			else
+			{
+				// Unknown state, should we try to delete again?
+				returnCode = OpDeleteError;
+			}
+		}
+		else
+		{
+			// If this function fails, the program enters an unknown state, should we try to append again?
+			returnCode = OpAppendError;
+		}
+	}
+
+	return returnCode;
+}
+
+// Sets the iterator to the first available thread from the ready queue
+EOperationStatus GetFirstReadyThread(PFILA2* queueReference)
+{
+	// Return code
+	EOperationStatus returnCode = OpUknownError;
+
+	// Considers that the queues are already initialized
+	if (((PFILA2)g_HighPrioReadyQueue)->first != NULL)
+	{
+		queueReference = g_HighPrioReadyQueue;
+		(*queueReference)->it = ((PFILA2)g_HighPrioReadyQueue)->first;
+		returnCode = OpSuccess;
+	}
+	else if (((PFILA2)g_MediumPrioReadyQueue)->first != NULL)
+	{
+		queueReference = g_MediumPrioReadyQueue;
+		(*queueReference)->it = ((PFILA2)g_MediumPrioReadyQueue)->first;
+		returnCode = OpSuccess;
+	}
+	else if (((PFILA2)g_LowPrioReadyQueue)->first != NULL)
+	{
+		queueReference = g_LowPrioReadyQueue;
+		(*queueReference)->it = ((PFILA2)g_LowPrioReadyQueue)->first;
+		returnCode = OpSuccess;
+	}
+	else
+	{
+		// There are no ready threads
 		returnCode = OpNullStructError;
 	}
 
