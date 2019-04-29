@@ -13,3 +13,12 @@
 
 ### To clean:
   ``` make clean ```
+
+## How to run (need to make tests to run tests):
+### To run main:
+#### From the directory where the program was compiled:
+  ``` ./bin/main ```
+
+### To run tests:
+#### From the directory where the program was compiled:
+  ``` ./bin/tests ```
