@@ -10,13 +10,6 @@ extern int g_numOfThreads;
 static int tid = 0;
 
 
-int test_prio(int prio)
-{
-    if(prio > 2 || prio < 0)
-        return -1;
-    return 0;
-}
-
 int get_tid()
 {
     tid++;
@@ -26,11 +19,6 @@ int get_tid()
 
 int ccreate (void* (*start)(void*), void *arg, int prio)
 {
-    
-    if(test_prio(prio) < 0)
-    {
-        return -1;
-    }
 
     TCB_t* new_thread = malloc(sizeof(TCB_t));
 
@@ -49,7 +37,22 @@ int ccreate (void* (*start)(void*), void *arg, int prio)
 
     //adicionar nova thread a fila de threads
 
-    AppendFila2(g_readyQueue, new_thread);
+    switch(prio)
+    {
+        case 0:
+            AppendFila2(g_HighPrioReadyQueue, new_thread);
+            break;
+        case 1:
+            AppendFila2(g_MediumPrioReadyQueue, new_thread);
+            break;
+        case 2:
+            AppendFila2(g_LowPrioReadyQueue, new_thread);
+            break;
+        default:
+            return -1;
+            break;   
+    }
+    
 
     return new_thread->tid;
 }
