@@ -47,6 +47,10 @@ int ccreate (void* (*start)(void*), void *arg, int prio)
 
     makecontext(&new_thread->context, (void (*)(void)) start, NUM_ARG, arg);
 
+    //adicionar nova thread a fila de threads
+
+    AppendFila2(g_readyQueue, new_thread);
+
     return new_thread->tid;
 }
 
