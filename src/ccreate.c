@@ -31,7 +31,7 @@ int ccreate (void* (*start)(void*), void *arg, int prio)
     getcontext(&new_thread->context);
 
     new_thread->context.uc_stack.ss_size = STACK_SIZE;
-    new_thread->context.uc_stack.ss_size = malloc(sizeof(STACK_SIZE));
+    new_thread->context.uc_stack.ss_sp = malloc(STACK_SIZE);
 
     makecontext(&new_thread->context, (void (*)(void)) start, NUM_ARG, arg);
 
