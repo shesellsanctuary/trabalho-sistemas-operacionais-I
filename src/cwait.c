@@ -4,10 +4,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <ucontext.h>
 #include "scheduler.h"
 #include "cthread.h"
 #include "cdata.h"
 #include "EOperationStatus.h"
+
+/******************************************************************************
+Parametros:
+	sem:	ponteiro para uma variavel do tipo semaforo.
+Retorno:
+	Quando executada corretamente: retorna 0 (zero)
+	Caso contrario, retorna um valor negativo.
+******************************************************************************/
 
 int
 cwait(csem_t *sem)
@@ -39,7 +48,7 @@ cwait(csem_t *sem)
 				AppendFila2(sem->fila, thread);
 				returnCode = OpSuccess;
 
-				//TODO:Call change of context to fetch next thread to execute
+				//TODO:Call dispatcher to fetch next thread to execute
 			}
 			else
 			{
