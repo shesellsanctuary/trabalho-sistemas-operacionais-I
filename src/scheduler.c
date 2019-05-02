@@ -47,6 +47,13 @@ EOperationStatus initialize()
 	// Initializes tid count
 	g_numOfThreads = 1;
 
+	// Initialize the end of thread context
+	getcontext(&endOfThreadContext);
+	endOfThreadContext.uc_link = 0;
+	endOfThreadContext.uc_stack.ss_sp = endOfThreadStack;
+	endOfThreadContext.uc_stack.ss_size = STACK_SIZE;
+	makecontext(&endOfThreadContext, (void(*)(void))threadEndFunction, 0);
+
 	// Initialize main thread
 	//TCB_t mainThread;
 	//mainThread.tid = MAIN_TID;
