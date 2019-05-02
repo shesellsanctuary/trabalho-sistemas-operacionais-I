@@ -20,7 +20,8 @@ EOperationStatus initialize()
 	// Allocates queue
 	g_readyQueues = (PFILA2)malloc(sizeof(FILA2));
 	// Error
-	if ((errno == ENOMEM) || (CreateFila2(g_readyQueues) != 0)) returnCode = OpAllocError;
+	if ((errno == ENOMEM) || (CreateFila2(g_readyQueues) != 0))
+		returnCode = OpAllocError;
 	if (returnCode != OpAllocError)
 	{
 		// Creates each priority queue
@@ -30,18 +31,20 @@ EOperationStatus initialize()
 		AppendFila2(g_readyQueues, malloc(sizeof(FILA2)));
 		// Low
 		AppendFila2(g_readyQueues, malloc(sizeof(FILA2)));
-		
+
 		// Allocates executing queue
 		g_executingThread = (PFILA2)malloc(sizeof(FILA2));
 		// Error
-		if ((errno == ENOMEM) || (CreateFila2(g_executingThread) != 0)) returnCode = OpAllocError;
+		if ((errno == ENOMEM) || (CreateFila2(g_executingThread) != 0))
+			returnCode = OpAllocError;
 	}
 	if (returnCode != OpAllocError)
 	{
 		// Allocates queue
 		g_blockedQueue = (PFILA2)malloc(sizeof(FILA2));
 		// Error
-		if ((errno == ENOMEM) || (CreateFila2(g_blockedQueue) != 0)) returnCode = OpAllocError;
+		if ((errno == ENOMEM) || (CreateFila2(g_blockedQueue) != 0))
+			returnCode = OpAllocError;
 	}
 
 	// Initializes tid count
@@ -57,7 +60,7 @@ EOperationStatus initialize()
 	// Initialize main thread
 	//TCB_t mainThread;
 	//mainThread.tid = MAIN_TID;
-	//mainThread.context = 
+	//mainThread.context =
 
 	// Call dispatcher for the main thread
 
@@ -65,7 +68,7 @@ EOperationStatus initialize()
 }
 
 // Appends to the right ready queue
-EOperationStatus appendThreadToReadyQueue(TCB_t* threadToAppend)
+EOperationStatus appendThreadToReadyQueue(TCB_t *threadToAppend)
 {
 	// Return code
 	EOperationStatus returnCode = OpUknownError;
@@ -130,9 +133,11 @@ EOperationStatus dispatch()
 		if (AppendFila2(g_executingThread, readyQueue->it) == 0)
 		{
 			// Change thread state to executing, there should be only 1 here
-			((TCB_t*)g_executingThread->first->node)->state = PROCST_EXEC;
+			((TCB_t *)g_executingThread->first->node)->state = PROCST_EXEC;
 			if (DeleteAtIteratorFila2(readyQueue) == 0)
 			{
+				// ucontext_t threadctxt = ((TCB_t *)g_executingThread->first->node)->context;
+				// setcontext(threadctxt); or swapcontext?
 				returnCode = OpSuccess;
 			}
 			else
@@ -152,7 +157,7 @@ EOperationStatus dispatch()
 }
 
 // Sets the iterator to the first available thread from the ready queue
-EOperationStatus GetFirstReadyThread(PFILA2* queueReference)
+EOperationStatus GetFirstReadyThread(PFILA2 *queueReference)
 {
 	// Return code
 	EOperationStatus returnCode = OpUknownError;

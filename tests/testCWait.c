@@ -5,7 +5,6 @@
 #include "cdata.h"
 #include "ETestStatus.h"
 #include "EOperationStatus.h"
-#include "testCSignal.h"
 #include "EThreadPriority.h"
 
 #include <stdio.h>

@@ -15,6 +15,7 @@ ETestStatus csetprio_test()
 	// Test status
 	ETestStatus testStatus = TestSuccess;
 
+	// Create thread with high priority
     TCB_t* x = (TCB_t*)malloc(sizeof(TCB_t));
 	ucontext_t* context = (ucontext_t*)malloc(sizeof(ucontext_t));
 	getcontext(context);
@@ -23,15 +24,18 @@ ETestStatus csetprio_test()
 	x->state = PROCST_EXEC;
 	x->tid = 1;
 
+	// Insert into executing 
     if (AppendFila2(g_executingThread, x) != 0)
 	{
 		//nothing
 	}
+	// Change thread priority to low
     if (csetprio(0, ThreadLowPriority) != 0)
 	{
 		testStatus = TestError;
 	}
     else{
+		// Thread priority should be low
         if (x->prio != ThreadLowPriority)
         {
             testStatus = TestError;
