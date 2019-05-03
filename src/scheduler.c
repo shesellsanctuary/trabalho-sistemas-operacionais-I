@@ -7,6 +7,7 @@
 #include "scheduler.h"
 #include "EThreadPriority.h"
 #include "TBool.h"
+#include "utils.h"
 
 // Defining the variable
 int g_numOfThreads = 0;
@@ -20,8 +21,7 @@ EOperationStatus initialize()
 	// Allocates queue
 	g_readyQueues = (PFILA2)malloc(sizeof(FILA2));
 	// Error
-	if ((errno == ENOMEM) || (CreateFila2(g_readyQueues) != 0))
-		returnCode = OpAllocError;
+	if ((errno == ENOMEM) || (CreateFila2(g_readyQueues) != 0)) returnCode = OpAllocError;
 	if (returnCode != OpAllocError)
 	{
 		// Creates each priority queue
@@ -35,34 +35,44 @@ EOperationStatus initialize()
 		// Allocates executing queue
 		g_executingThread = (PFILA2)malloc(sizeof(FILA2));
 		// Error
-		if ((errno == ENOMEM) || (CreateFila2(g_executingThread) != 0))
-			returnCode = OpAllocError;
+		if ((errno == ENOMEM) || (CreateFila2(g_executingThread) != 0)) returnCode = OpAllocError;
 	}
 	if (returnCode != OpAllocError)
 	{
 		// Allocates queue
 		g_blockedQueue = (PFILA2)malloc(sizeof(FILA2));
 		// Error
-		if ((errno == ENOMEM) || (CreateFila2(g_blockedQueue) != 0))
-			returnCode = OpAllocError;
+		if ((errno == ENOMEM) || (CreateFila2(g_blockedQueue) != 0)) returnCode = OpAllocError;
 	}
+	if (returnCode != OpAllocError)
+	{
+		// Allocates queue
+		g_cjoinQueue = (PFILA2)malloc(sizeof(FILA2));
+		// Error
+		if ((errno == ENOMEM) || (CreateFila2(g_cjoinQueue) != 0)) returnCode = OpAllocError;
+	}
+	if (returnCode != OpAllocError)
+	{
+		// Initializes tid count
+		g_numOfThreads = 1;
 
-	// Initializes tid count
-	g_numOfThreads = 1;
+		// Initialize the end of thread context
+		getcontext(&endOfThreadContext);
+		endOfThreadContext.uc_link = 0;
+		endOfThreadContext.uc_stack.ss_sp = endOfThreadStack;
+		endOfThreadContext.uc_stack.ss_size = STACK_SIZE;
+		makecontext(&endOfThreadContext, (void(*)(void))threadEndFunction, 0);
 
-	// Initialize the end of thread context
-	getcontext(&endOfThreadContext);
-	endOfThreadContext.uc_link = 0;
-	endOfThreadContext.uc_stack.ss_sp = endOfThreadStack;
-	endOfThreadContext.uc_stack.ss_size = STACK_SIZE;
-	makecontext(&endOfThreadContext, (void(*)(void))threadEndFunction, 0);
+		// Initialize main thread
+		//TCB_t mainThread;
+		//mainThread.tid = MAIN_TID;
+		//mainThread.context =
+		// Add main thread to the ready list
 
-	// Initialize main thread
-	//TCB_t mainThread;
-	//mainThread.tid = MAIN_TID;
-	//mainThread.context =
-
-	// Call dispatcher for the main thread
+		// Call dispatcher for the main thread
+		dispatch();
+		// No need to set context
+	}
 
 	return returnCode;
 }
@@ -188,4 +198,63 @@ EOperationStatus GetFirstReadyThread(PFILA2 *queueReference)
 	}
 
 	return returnCode;
+}
+
+// Unblocks the thread waiting for the current to end
+// Assumes the queues have already been started
+// Shuold return success if no thread were waited for, or found when searched in the blocked queue
+EOperationStatus UnblockThreadWaitingForThis(int tidOfExecutingThread)
+{
+	// Return code
+	EOperationStatus returnCode = OpSuccess;
+
+	// Searches for the thread
+	if ((SearchFila2(g_cjoinQueue, tidOfExecutingThread) == OpSuccess) && (g_cjoinQueue->it != NULL))
+	{
+		// TID of thread is in the iterator of the queue, we should change its state and move it to the ready queue
+		if ((SearchThreadFila2(g_blockedQueue, (int)g_cjoinQueue->it->node) == OpSuccess) && (g_blockedQueue->it != NULL))
+		{
+			// Updates the state
+			((TCB_t*)g_blockedQueue->it->node)->state = PROCST_APTO;
+
+			// Adds to ready queue
+			if (appendThreadToReadyQueue((TCB_t*)g_blockedQueue->it->node) != OpSuccess)
+			{
+				perror("Error adding thread to the ready queue.");
+				returnCode = OpAppendError;
+			}
+			// Deletes from the blocked queue
+			else if (DeleteAtIteratorFila2(g_blockedQueue) != OpSuccess)
+			{
+				perror("Error deleting thread from blocked queue.");
+				returnCode = OpDeleteError;
+			}
+		}
+	}
+
+	return returnCode;
+}
+
+// Function that will be called once a thread ends, must do the necessary logic for the cjoin function
+// This function never returns, as it just swaps the context to the next thread
+// It will call the scheduler to call the next thread
+// It will be inside a context, which the other threads need to link to
+void threadEndFunction()
+{
+	// Searches the cjoin queue to unblock the threads that were waiting for the finished thread
+	if (UnblockThreadWaitingForThis(((TCB_t*)g_executingThread->first)->tid) != OpSuccess)
+	{
+		perror("Error while trying to unblock thread.");
+	}
+
+	// Sets the iterator
+	FirstFila2(g_executingThread);
+	// Deletes the finished thread
+	DeleteAtIteratorFila2(g_executingThread);
+
+	// Puts the next thread into execution
+	dispatch();
+
+	// Set next executing thread context
+	setcontext(&((TCB_t*)g_executingThread->first)->context);
 }

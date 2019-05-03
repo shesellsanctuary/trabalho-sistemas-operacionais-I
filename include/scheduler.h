@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include <ucontext.h>
+
 #include "support.h"
 #include "cdata.h"
 #include "EOperationStatus.h"
@@ -11,6 +13,12 @@
 #define g_MediumPrioReadyQueue g_readyQueues->first->next->node
 #define g_LowPrioReadyQueue g_readyQueues->first->next->next->node
 
+// End of thread execution context
+ucontext_t endOfThreadContext;
+
+// Stack for the end of thread
+char endOfThreadStack[STACK_SIZE];
+
 // Queues with the ready threads, one for each priority
 PFILA2 g_readyQueues;
 
@@ -19,6 +27,9 @@ PFILA2 g_blockedQueue;
 
 // Executing thread
 PFILA2 g_executingThread;
+
+// Queues with the with a pair of the thread blocked by cjoin and the thread it is waiting for
+PFILA2 g_cjoinQueue;
 
 // Number of total threads created since the beginning 
 int g_numOfThreads;
@@ -38,5 +49,11 @@ EOperationStatus dispatch();
 
 // Sets the iterator to the first available thread from the ready queue
 EOperationStatus GetFirstReadyThread(PFILA2* queueReference);
+
+// Function that will be called once a thread ends, must do the necessary logic for the cjoin function
+// This function never returns, as it just swaps the context to the next thread
+// It will call the scheduler to call the next thread
+// It will be inside a context, which the other threads need to link to
+void threadEndFunction();
 
 #endif // !SCHEDULER_H

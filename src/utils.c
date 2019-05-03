@@ -50,6 +50,53 @@ EOperationStatus SearchThreadFila2(PFILA2 queue, int content)
 	return retStatus;
 }
 
+// Searches queue for the pair where p1 == content
+// At the end, the it of the queue will be positioned on the found element, else it will be null
+EOperationStatus SearchFila2(PFILA2 queue, int content)
+{
+	// Operation status
+	EOperationStatus retStatus = OpUknownError;
+
+	// If allocation was successfull
+	if (queue != NULL)
+	{
+		// Initializing iterator
+		if (FirstFila2(queue) == 0)
+		{
+			// Found flag
+			TBool found = false;
+			// Iterates through the queue
+			while ((queue->it != queue->last->next) && (found != true))
+			{
+				// If the p1 of the pair is equal to the content
+				if ((((pair*)queue->it->node)->p1 == content))
+				{
+					found = true;
+				}
+				// If not found
+				if (!found)
+				{
+					NextFila2(queue);
+				}
+			}
+			// If the element was not found, then we set to null it
+			if (!found)
+			{
+				queue->it = NULL;
+			}
+			// Operation success if it could search and try to find
+			retStatus = OpSuccess;
+		}
+	}
+	else
+	{
+		// Null struct received
+		retStatus = OpNullStructError;
+	}
+
+	return retStatus;
+}
+
 // Gets the size of a queue, returns 0 for NULL
 int GetSizeFila2(PFILA2 queue)
 {
