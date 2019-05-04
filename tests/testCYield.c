@@ -37,9 +37,8 @@ ETestStatus cyield_test()
     }
     else
     {
-        printf("exec thread: %d\n", ((TCB_t*)g_executingThread->first->node)->tid);
-        // First thread should have "apto" state
-        if (((TCB_t*)g_executingThread->first->node)->state != PROCST_APTO)
+        // x should have apto state
+        if (x->state != PROCST_APTO)
         {
             testStatus = TestError;
             perror("Wrong new state.\n");
