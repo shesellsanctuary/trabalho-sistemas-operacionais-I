@@ -17,7 +17,6 @@ Retorno:
 	Quando executada corretamente: retorna 0 (zero)
 	Caso contrario, retorna um valor negativo.
 ******************************************************************************/
-
 int
 cwait(csem_t *sem)
 {
@@ -40,7 +39,6 @@ cwait(csem_t *sem)
 			// If count is <= 0 put thread on blocked state and on resource wait list 
 			if (sem->count <= 0)
 			{
-				printf("no more resource\n");
 				TCB_t* thread = (TCB_t*)g_executingThread->first->node;
 				// Changes thread state to blocked
 				thread->state = PROCST_BLOQ;
@@ -53,6 +51,7 @@ cwait(csem_t *sem)
 						(AppendFila2(g_blockedQueue,thread) == OpSuccess) && 
 						(AppendFila2(sem->fila, thread)) == OpSuccess)
 					{	
+						swapcontext(&thread->context, &((TCB_t*)g_executingThread->first->node)->context);
 						returnCode = OpSuccess;
 					}
 					else
@@ -69,7 +68,6 @@ cwait(csem_t *sem)
 			}
 			else
 			{
-				printf("resource given\n");
 				// If it is free, put it to thread and continue
 				// Request resource
 				sem->count--;

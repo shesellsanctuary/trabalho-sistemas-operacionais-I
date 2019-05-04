@@ -37,13 +37,13 @@ csignal(csem_t *sem)
 		// If allocation was successfull
 		if (sem != NULL)
 		{
+			// Free resource
+			sem->count++;
 			// Initializing iterator
 			if (FirstFila2(sem->fila) == 0)
 			{
 				// Gets the current node
 				TCB_t* currThread = (TCB_t*)sem->fila->it->node;
-				// Free resource
-				sem->count++;
 				// Changes thread state to ready
 				currThread->state = PROCST_APTO;
 
