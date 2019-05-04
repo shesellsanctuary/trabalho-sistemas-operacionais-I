@@ -53,8 +53,8 @@ ETestStatus cyield_test()
 
     // !!!  IMPORTANT !!!
     // Needs to free the memory used always
-    // free(x);
-    // free(context);
+    free(x);
+    free(context);
 
     return testStatus;
 }
