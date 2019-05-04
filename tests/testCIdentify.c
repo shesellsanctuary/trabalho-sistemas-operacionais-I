@@ -18,13 +18,14 @@ ETestStatus cidentify_test()
 
 	char names[MAX_SIZE];
 	//char names = "Arthur Zachow - 00277951\nEduardo Guerra - 00260267\nEmily Calvet - 00242277";
-	
-	int i = 0;
-	for (; i < MAX_SIZE; i++) {
-      names[i] = 'T';
-    }
 
-    if (cidentify(names, MAX_SIZE) != 0)
+	int i = 0;
+	for (; i < MAX_SIZE; i++)
+	{
+		names[i] = 'T';
+	}
+
+	if (cidentify(names, MAX_SIZE) != 0)
 	{
 		testStatus = TestError;
 	}

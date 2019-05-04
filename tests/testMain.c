@@ -8,6 +8,7 @@
 #include "testCWait.h"
 #include "testCYield.h"
 #include "testCJoin.h"
+#include "testCCreate.h"
 #include "sourceExample.h"
 
 ETestStatus runAllTests()
@@ -102,6 +103,22 @@ ETestStatus runAllTests()
 	printf("cjoin_test:\t");
 	// Run the test
 	currentTestStatus = cjoin_test();
+	// Check if test runned successfully
+	if (currentTestStatus != TestSuccess)
+	{
+		overallTestStatus -= TestError;
+		printf("FAILED\n");
+	}
+	else
+	{
+		printf("SUCCESS\n");
+	}
+
+	// ccreate test
+	// Currently running test
+	printf("ccreate_test:\t");
+	// Run the test
+	currentTestStatus = ccreate_test();
 	// Check if test runned successfully
 	if (currentTestStatus != TestSuccess)
 	{
