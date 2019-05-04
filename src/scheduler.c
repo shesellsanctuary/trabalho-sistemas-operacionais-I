@@ -272,6 +272,9 @@ void threadEndFunction()
 
 	// Sets the iterator
 	FirstFila2(g_executingThread);
+	// Free the memory
+	free(((TCB_t*)g_executingThread->first->node)->context.uc_stack.ss_sp);
+	free(g_executingThread->first->node);
 	// Deletes the finished thread
 	DeleteAtIteratorFila2(g_executingThread);
 
