@@ -46,9 +46,17 @@ cyield(void)
 				// Call dispatcher to put next thread on execution
 				returnCode = OpSuccess;
 			}
+			// Else we just append to the ready queue and call the same thread again, because it is the only thread available
 			else
 			{
-				returnCode = OpAppendError;
+				if ((appendThreadToReadyQueue(thread) == OpSuccess) && (dispatch() == OpSuccess))
+				{
+					returnCode = OpSuccess;
+				}
+				else
+				{
+					returnCode = OpUknownError;
+				}
 			}
 		}
 		else
