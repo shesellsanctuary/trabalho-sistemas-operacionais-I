@@ -26,12 +26,24 @@ EOperationStatus initialize()
 	if (returnCode != OpAllocError)
 	{
 		// Creates each priority queue
-		// High
-		AppendFila2(g_readyQueues, malloc(sizeof(FILA2)));
-		// Medium
-		AppendFila2(g_readyQueues, malloc(sizeof(FILA2)));
-		// Low
-		AppendFila2(g_readyQueues, malloc(sizeof(FILA2)));
+		PFILA2 tempQueue = (PFILA2)malloc(sizeof(FILA2));
+		if (CreateFila2(tempQueue) == 0)
+		{
+			// High
+			AppendFila2(g_readyQueues, tempQueue);
+		}
+		tempQueue = (PFILA2)malloc(sizeof(FILA2));
+		if (CreateFila2(tempQueue) == 0)
+		{
+			// Medium
+			AppendFila2(g_readyQueues, tempQueue);
+		}
+		tempQueue = (PFILA2)malloc(sizeof(FILA2));
+		if (CreateFila2(tempQueue) == 0)
+		{
+			// Low
+			AppendFila2(g_readyQueues, tempQueue);
+		}
 
 		// Allocates executing queue
 		g_executingThread = (PFILA2)malloc(sizeof(FILA2));
@@ -151,7 +163,7 @@ EOperationStatus dispatch()
 	if (GetFirstReadyThread(&readyQueue) == OpSuccess)
 	{
 		// Add to executing queue and delete from ready queue
-		if (AppendFila2(g_executingThread, readyQueue->it) == 0)
+		if (AppendFila2(g_executingThread, readyQueue->it->node) == 0)
 		{
 			// Change thread state to executing, there should be only 1 here
 			((TCB_t *)g_executingThread->first->node)->state = PROCST_EXEC;
