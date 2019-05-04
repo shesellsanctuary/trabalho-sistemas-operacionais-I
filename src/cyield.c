@@ -47,8 +47,8 @@ cyield(void)
 			// Deleting thread from executing queue
 			if (DeleteAtIteratorFila2(g_executingThread) == 0)
 			{	// Call dispatcher to put next thread on execution
-			printf("deleted thread from exec\n");
-				// dispatch();
+				printf("deleted thread from exec\n");
+			    dispatch();
 				returnCode = OpSuccess;
 			}
 			else

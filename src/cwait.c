@@ -12,7 +12,7 @@
 
 /******************************************************************************
 Parametros:
-	sem:	ponteiro para uma variavel do tipo semaforo.
+	sem: ponteiro para uma variavel do tipo semaforo.
 Retorno:
 	Quando executada corretamente: retorna 0 (zero)
 	Caso contrario, retorna um valor negativo.
@@ -46,16 +46,17 @@ cwait(csem_t *sem)
 				
 				// Add thread to end of queue
 				AppendFila2(sem->fila, thread);
+				// Call dispatcher to fetch next thread to execute
+				dispatch();
 				returnCode = OpSuccess;
 
-				//TODO:Call dispatcher to fetch next thread to execute
 			}
 			else
 			{
-			// If it is free, put it to thread and continue
-			// Request resource
-			sem->count--;
-			returnCode = OpSuccess;                    
+				// If it is free, put it to thread and continue
+				// Request resource
+				sem->count--;
+				returnCode = OpSuccess;
 			}
 		}
 		else

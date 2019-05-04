@@ -11,10 +11,18 @@
 
 ETestStatus cyield_test()
 {
+    printf("going to initialize\n");
+    // Initializes library
+	initialize();
+    printf("initialized\n");
+    TCB_t* thread = (TCB_t*)g_executingThread->first->node;
+    printf("main? %d\n", thread->tid);
+
     // Test status
     ETestStatus testStatus = TestSuccess;
 
     // Create executing thread to free the cpu willingly
+    
     TCB_t *x = (TCB_t *)malloc(sizeof(TCB_t));
     ucontext_t *context = (ucontext_t *)malloc(sizeof(ucontext_t));
     getcontext(context);
@@ -23,6 +31,7 @@ ETestStatus cyield_test()
     x->state = PROCST_EXEC;
     x->tid = 1;
 
+    
     if (AppendFila2(g_executingThread, x) != 0)
     {
         //nothing

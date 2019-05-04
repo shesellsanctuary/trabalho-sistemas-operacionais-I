@@ -80,21 +80,21 @@ ETestStatus runAllTests()
 		printf("SUCCESS\n");
 	}
 
-	// // cyield test
-	// // Currently running test
-	// printf("cyield_test:\t");
-	// // Run the test
-	// currentTestStatus = cyield_test();
-	// // Check if test runned successfully
-	// if (currentTestStatus != TestSuccess)
-	// {
-	// 	overallTestStatus -= TestError;
-	// 	printf("FAILED\n");
-	// }
-	// else
-	// {
-	// 	printf("SUCCESS\n");
-	// }
+	// cyield test
+	// Currently running test
+	printf("cyield_test:\t");
+	// Run the test
+	currentTestStatus = cyield_test();
+	// Check if test runned successfully
+	if (currentTestStatus != TestSuccess)
+	{
+		overallTestStatus -= TestError;
+		printf("FAILED\n");
+	}
+	else
+	{
+		printf("SUCCESS\n");
+	}
 
 	// If any test failed
 	if (overallTestStatus != 0)
