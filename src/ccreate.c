@@ -6,14 +6,6 @@
 
 extern int g_numOfThreads;
 
-static int tid = 0;
-
-int get_tid()
-{
-    tid++;
-    return tid;
-}
-
 int ccreate(void *(*start)(void *), void *arg, int prio)
 {
     // Operation status to be returned
@@ -30,7 +22,7 @@ int ccreate(void *(*start)(void *), void *arg, int prio)
     {
         TCB_t *new_thread = malloc(sizeof(TCB_t));
 
-        new_thread->tid = get_tid();
+        new_thread->tid = ++g_numOfThreads;
         new_thread->state = PROCST_APTO;
         new_thread->prio = prio;
 
@@ -39,13 +31,14 @@ int ccreate(void *(*start)(void *), void *arg, int prio)
 
         new_thread->context.uc_stack.ss_size = STACK_SIZE;
         new_thread->context.uc_stack.ss_sp = malloc(STACK_SIZE);
+		new_thread->context.uc_link = &endOfThreadContext;
 
         makecontext(&new_thread->context, (void (*)(void))start, NUM_ARG, arg);
 
         // Add new thread to respective priority queue
         if (appendThreadToReadyQueue(new_thread) == OpSuccess)
         {
-            return new_thread->tid;
+            returnCode = new_thread->tid;
         }
     }
     return returnCode;
