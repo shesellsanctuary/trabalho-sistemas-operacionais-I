@@ -63,8 +63,6 @@ cwait(csem_t *sem)
 				{
 					returnCode = OpDeleteError;
 				}
-				
-				
 			}
 			else
 			{
@@ -76,7 +74,6 @@ cwait(csem_t *sem)
 		}
 		else
 		{
-			printf("sem = null\n");
 			// Null struct
 			returnCode = OpNullStructError;
 		}

@@ -69,11 +69,11 @@ ETestStatus cwait_test()
 
 	// !!!  IMPORTANT !!!
 	// Needs to free the memory used always
-	/*for (FirstFila2(pSem->fila); pSem->fila->it != pSem->fila->last->next; NextFila2(pSem->fila))
+	for (FirstFila2(pSem->fila); pSem->fila->it != pSem->fila->last->next; NextFila2(pSem->fila))
 	{
 		// Free elements of the queue
-		//free(pSem->fila->it->node);
-	}*/
+		free(pSem->fila->it->node);
+	}
 	free(pSem->fila);
 	free(pSem);
 
