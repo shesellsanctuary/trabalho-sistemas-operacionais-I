@@ -11,12 +11,11 @@
 
 ETestStatus cyield_test()
 {
-    printf("going to initialize\n");
     // Initializes library
 	initialize();
-    printf("initialized\n");
+    // Get main thread
     TCB_t* thread = (TCB_t*)g_executingThread->first->node;
-    printf("main? %d\n", thread->tid);
+    printf("main? %d\n state: %d\n", thread->tid, thread->state);
 
     // Test status
     ETestStatus testStatus = TestSuccess;
@@ -28,14 +27,15 @@ ETestStatus cyield_test()
     getcontext(context);
     x->context = *context;
     x->prio = ThreadHighPriority;
-    x->state = PROCST_EXEC;
+    x->state = PROCST_APTO;
     x->tid = 1;
 
-    
-    if (AppendFila2(g_executingThread, x) != 0)
-    {
-        //nothing
-    }
+    AppendFila2(g_HighPrioReadyQueue, x);
+
+    // if (AppendFila2(g_executingThread, x) != 0)
+    // {
+    //     //nothing
+    // }
     if (cyield() != OpSuccess)
     {
         testStatus = TestError;
@@ -43,14 +43,15 @@ ETestStatus cyield_test()
     }
     else
     {
+        printf("exec thread: %d\n", ((TCB_t*)g_executingThread->first->node)->tid);
         // First thread should have "apto" state
-        if (x->state != PROCST_APTO)
+        if (((TCB_t*)g_executingThread->first->node)->state != PROCST_APTO)
         {
             testStatus = TestError;
-            printf("wrong new state \n");
+            printf("wrong new state: %d \n", ((TCB_t*)g_executingThread->first->node)->state);
         }
         // Thread should be in its respective ready queue
-        if (SearchThreadFila2(g_HighPrioReadyQueue, x->tid) != 0)
+        if (SearchThreadFila2(g_LowPrioReadyQueue, thread->tid) != 0)
         {
             printf("thread not found in ready queue\n");
             testStatus = TestError;
@@ -59,8 +60,8 @@ ETestStatus cyield_test()
 
     // !!!  IMPORTANT !!!
     // Needs to free the memory used always
-    free(x);
-    free(context);
+    // free(x);
+    // free(context);
 
     return testStatus;
 }
