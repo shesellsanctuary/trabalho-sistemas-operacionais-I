@@ -9,6 +9,7 @@
 #include "cthread.h"
 #include "cdata.h"
 #include "EOperationStatus.h"
+#include "EThreadPriority.h"
 
 /******************************************************************************
 Parametros:
@@ -43,6 +44,8 @@ cyield(void)
 			// First dispatch next thread to execution then adds the old thread to respective ready queue
 			if ((dispatch() == OpSuccess) && (appendThreadToReadyQueue(thread) == OpSuccess))
 			{	
+				// Swap context
+				swapcontext(&thread->context, &((TCB_t*)g_executingThread->first->node)->context);
 				// Call dispatcher to put next thread on execution
 				returnCode = OpSuccess;
 			}
@@ -51,6 +54,8 @@ cyield(void)
 			{
 				if ((appendThreadToReadyQueue(thread) == OpSuccess) && (dispatch() == OpSuccess))
 				{
+					// Swap context
+					swapcontext(&thread->context, &((TCB_t*)g_executingThread->first->node)->context);
 					returnCode = OpSuccess;
 				}
 				else

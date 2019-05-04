@@ -56,4 +56,7 @@ EOperationStatus GetFirstReadyThread(PFILA2* queueReference);
 // It will be inside a context, which the other threads need to link to
 void threadEndFunction();
 
+// This function shall close and free all memory used by the library
+EOperationStatus terminate();
+
 #endif // !SCHEDULER_H

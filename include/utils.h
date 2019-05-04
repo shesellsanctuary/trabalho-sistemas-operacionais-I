@@ -22,4 +22,7 @@ EOperationStatus SearchFila2(PFILA2 queue, int content, int opType);
 // Gets the size of a queue, returns 0 for NULL
 int GetSizeFila2(PFILA2 queue);
 
+// Free queue and its contents
+void freeQueue(PFILA2* queue);
+
 #endif // !UTILS_H

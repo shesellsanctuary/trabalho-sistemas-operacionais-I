@@ -140,3 +140,18 @@ int GetSizeFila2(PFILA2 queue)
 
 	return size;
 }
+
+// Free queue and its contents
+void freeQueue(PFILA2* queue)
+{
+	while ((*queue)->it != (*queue)->last->next)
+	{
+		FirstFila2((*queue));
+		// Free content
+		free((*queue)->it->node);
+		// Free node
+		DeleteAtIteratorFila2((*queue));
+	}
+
+	free(queue);
+}

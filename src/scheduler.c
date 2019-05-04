@@ -82,6 +82,9 @@ EOperationStatus initialize()
 
 		TCB_t* thread = (TCB_t*)malloc(sizeof(TCB_t));
 		thread->context = *context;
+		thread->context.uc_stack.ss_size = STACK_SIZE;
+		thread->context.uc_stack.ss_sp = malloc(STACK_SIZE);
+		thread->context.uc_link = &endOfThreadContext;
 		thread->prio = ThreadLowPriority;
 		thread->state = PROCST_APTO;
 		thread->tid = MAIN_TID;
@@ -281,9 +284,44 @@ void threadEndFunction()
 	// Puts the next thread into execution
 	dispatch();
 
-	// Set next executing thread context
+	// If there's any thread executing
 	if (GetSizeFila2(g_executingThread) > 0)
 	{
+		// Set next executing thread context
 		setcontext(&((TCB_t*)g_executingThread->first->node)->context);
 	}
+	// Else last thread
+	else
+	{
+		// Terminate library
+		/*
+		if (terminate() != OpSuccess)
+		{
+			perror("Error while terminating cthreads library.");
+		}*/
+	}
+}
+
+// This function shall close and free all memory used by the library
+EOperationStatus terminate()
+{
+	// Return code of the operation
+	EOperationStatus returnCode = OpUknownError;
+
+	// Free all memory
+	// Free executing thread, it is already empty
+	free(g_executingThread);
+	// Free blocked queue and its contents
+	freeQueue(&g_blockedQueue);
+	// Free high prio ready queue
+	//PFILA2* ptr = &((PFILA2)g_HighPrioReadyQueue);
+	freeQueue(((PFILA2*)&g_HighPrioReadyQueue));
+	// Free medium prio ready queue
+	freeQueue(((PFILA2*)&g_MediumPrioReadyQueue));
+	// Free low prio ready queue
+	freeQueue(((PFILA2*)&g_LowPrioReadyQueue));
+	// Free cjoin queue
+	freeQueue(&g_cjoinQueue);
+
+	return returnCode;
 }
