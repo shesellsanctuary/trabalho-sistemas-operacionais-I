@@ -4,6 +4,7 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "scheduler.h"
 #include "EThreadPriority.h"
 #include "TBool.h"
