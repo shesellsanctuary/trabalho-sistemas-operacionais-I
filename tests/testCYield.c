@@ -18,7 +18,6 @@ ETestStatus cyield_test()
     ETestStatus testStatus = TestSuccess;
 
     // Create executing thread to free the cpu willingly
-    
     TCB_t *x = (TCB_t *)malloc(sizeof(TCB_t));
     ucontext_t *context = (ucontext_t *)malloc(sizeof(ucontext_t));
     getcontext(context);

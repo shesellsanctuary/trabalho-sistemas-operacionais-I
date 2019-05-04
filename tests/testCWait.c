@@ -6,15 +6,23 @@
 #include "ETestStatus.h"
 #include "EOperationStatus.h"
 #include "EThreadPriority.h"
-
+#include "utils.h"
 #include <stdio.h>
+int dummyFunction()
+{
+	printf("dummy \n");
+	return 2;
+}
 
 ETestStatus cwait_test()
 {
+	// Initializes library
+	initialize();
+
 	// Test status
 	ETestStatus testStatus = TestSuccess;
 
-	//  Pointer to semaphore
+	// Pointer to semaphore
 	// Allocates memory
 	csem_t* pSem = (csem_t*)malloc(sizeof(csem_t));
 
@@ -31,13 +39,17 @@ ETestStatus cwait_test()
 	getcontext(context);
 	x->context = *context;
 	x->prio = ThreadHighPriority;
-	x->state = PROCST_EXEC;
+	x->state = PROCST_APTO;
 	x->tid = 1;
+
+	appendThreadToReadyQueue(x);
+
+	// Remove main thread from execution
+	cyield();
 	
-	if (AppendFila2(g_executingThread, x) != 0)
-	{
-		//nothing
-	}
+	TCB_t* thread = (TCB_t*)g_executingThread->first->node;
+	printf("executing: %d\n", thread->tid);
+
 	if (cwait(pSem) != OpSuccess)
 	{
 		testStatus = TestError;
@@ -45,30 +57,30 @@ ETestStatus cwait_test()
 	}
 	else
 	{
-		// Initializing executing queue iterator
-		if (FirstFila2(g_executingThread) != 0)
+		// First thread should be "executing", because it got the resource without waiting
+		if (x->state != PROCST_EXEC)
 		{
-			printf("error initializing it\n");
+			TCB_t* thread = (TCB_t*)g_executingThread->first->node;
+			printf("executing: %d\n", thread->tid);
+			testStatus = TestError;
+			printf("fail state 1\n state: %d\n tid: %d\n", x->state, x->tid);
 		}
-		// Deleting previous thread from queue
-		if ( DeleteAtIteratorFila2(g_executingThread) != 0)
-		{
-			printf("error deleting 1\n");
-		}
-
-		// Creating new thread and appending to executing queue
+		// Creating new thread and appending to ready queue
 		TCB_t* y = (TCB_t*)malloc(sizeof(TCB_t));
 		ucontext_t* context = (ucontext_t*)malloc(sizeof(ucontext_t));
 		getcontext(context);
 		y->context = *context;
 		y->prio = ThreadHighPriority;
-		y->state = PROCST_EXEC;
+		y->state = PROCST_APTO;
 		y->tid = 2;
+
+		appendThreadToReadyQueue(y);
+
+		// Removing first thread from execution 
+		cyield();
+		TCB_t* thread = (TCB_t*)g_executingThread->first->node;
+		printf("executing: %d\n", thread->tid);
 		
-		if (AppendFila2(g_executingThread, y) != 0)
-		{
-			printf("error appending 2\n");
-		}
 		// Requesting non existent resource
 		if (cwait(pSem) != OpSuccess)
 		{
@@ -77,21 +89,14 @@ ETestStatus cwait_test()
 		}
 		else
 		{
-			// First thread should be "executing", because it got the resource without waiting
-			if (x->state != PROCST_EXEC)
+			// Thread should be blocked and on both the resource and blocked queues
+			if ((SearchFila2(pSem->fila, y->tid) != OpSuccess) || 
+				(y->state != PROCST_BLOQ) || 
+				(SearchFila2(g_blockedQueue, y->tid)) != OpSuccess)
 			{
+				printf("second thread not on sem list\n tid: %d\n state: %d\n", y->tid, y->state);
 				testStatus = TestError;
-				printf("fail state 1\n");
-			}
-			// Initializing sem iterator
-			if (FirstFila2(pSem->fila) == 0)
-			{
-				TCB_t* firstThread = (TCB_t*)pSem->fila->it->node;
-				// Second thread should be on sem list and with state blocked
-				if ((firstThread->state != PROCST_BLOQ) && (testStatus != TestError))
-				{
-					testStatus = TestError;
-				}
+
 			}
 		}
 	free(y);

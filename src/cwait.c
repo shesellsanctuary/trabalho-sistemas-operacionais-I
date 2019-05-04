@@ -40,19 +40,36 @@ cwait(csem_t *sem)
 			// If count is <= 0 put thread on blocked state and on resource wait list 
 			if (sem->count <=0)
 			{
+				printf("no more resource\n");
 				TCB_t* thread = (TCB_t*)g_executingThread->first->node;
 				// Changes thread state to blocked
 				thread->state = PROCST_BLOQ;
-				
-				// Add thread to end of queue
-				AppendFila2(sem->fila, thread);
-				// Call dispatcher to fetch next thread to execute
-				dispatch();
-				returnCode = OpSuccess;
 
+				// Starts executing iterator and deletes thread from executing queue
+				if ((FirstFila2(g_executingThread) == OpSuccess) && (DeleteAtIteratorFila2(g_executingThread) == OpSuccess))
+				{
+					// First dispatch next thread to execution then adds the old thread to blocked queue and semaphore queue
+					if ((dispatch() == OpSuccess) && 
+						(AppendFila2(g_blockedQueue,thread) == OpSuccess) && 
+						(AppendFila2(sem->fila, thread)) == OpSuccess)
+					{	
+						returnCode = OpSuccess;
+					}
+					else
+					{
+						returnCode = OpAppendError;
+					}
+				}
+				else
+				{
+					returnCode = OpDeleteError;
+				}
+				
+				
 			}
 			else
 			{
+				printf("resource given\n");
 				// If it is free, put it to thread and continue
 				// Request resource
 				sem->count--;
@@ -61,6 +78,7 @@ cwait(csem_t *sem)
 		}
 		else
 		{
+			printf("sem = null\n");
 			// Null struct
 			returnCode = OpNullStructError;
 		}

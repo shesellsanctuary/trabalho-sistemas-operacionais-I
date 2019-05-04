@@ -43,7 +43,6 @@ cyield(void)
 			// First dispatch next thread to execution then adds the old thread to respective ready queue
 			if ((dispatch() == OpSuccess) && (appendThreadToReadyQueue(thread) == OpSuccess))
 			{	
-				// Call dispatcher to put next thread on execution
 				returnCode = OpSuccess;
 			}
 			// Else we just append to the ready queue and call the same thread again, because it is the only thread available
