@@ -65,10 +65,20 @@ EOperationStatus initialize()
 		makecontext(&endOfThreadContext, (void(*)(void))threadEndFunction, 0);
 
 		// Initialize main thread
-		//TCB_t mainThread;
-		//mainThread.tid = MAIN_TID;
-		//mainThread.context =
+		ucontext_t* context = (ucontext_t*)malloc(sizeof(ucontext_t));
+		getcontext(context);
+
+		TCB_t* thread = (TCB_t*)malloc(sizeof(TCB_t));
+		thread->context = *context;
+		thread->prio = ThreadLowPriority;
+		thread->state = PROCST_APTO;
+		thread->tid = MAIN_TID;
 		// Add main thread to the ready list
+		if (AppendFila2(g_LowPrioReadyQueue, thread) != 0)
+		{
+			perror("Error adding main thread to queue.");
+			returnCode = OpAppendError;
+		}
 
 		// Call dispatcher for the main thread
 		dispatch();
@@ -138,7 +148,7 @@ EOperationStatus dispatch()
 	PFILA2 readyQueue = NULL;
 
 	// Get the first ready thread
-	if (GetFirstReadyThread(&readyQueue) != OpUknownError)
+	if (GetFirstReadyThread(&readyQueue) == OpSuccess)
 	{
 		// Add to executing queue and delete from ready queue
 		if (AppendFila2(g_executingThread, readyQueue->it) == 0)
@@ -176,19 +186,19 @@ EOperationStatus GetFirstReadyThread(PFILA2 *queueReference)
 	// Considers that the queues are already initialized
 	if (((PFILA2)g_HighPrioReadyQueue)->first != NULL)
 	{
-		queueReference = g_HighPrioReadyQueue;
+		(*queueReference) = g_HighPrioReadyQueue;
 		(*queueReference)->it = ((PFILA2)g_HighPrioReadyQueue)->first;
 		returnCode = OpSuccess;
 	}
 	else if (((PFILA2)g_MediumPrioReadyQueue)->first != NULL)
 	{
-		queueReference = g_MediumPrioReadyQueue;
+		(*queueReference) = g_MediumPrioReadyQueue;
 		(*queueReference)->it = ((PFILA2)g_MediumPrioReadyQueue)->first;
 		returnCode = OpSuccess;
 	}
 	else if (((PFILA2)g_LowPrioReadyQueue)->first != NULL)
 	{
-		queueReference = g_LowPrioReadyQueue;
+		(*queueReference) = g_LowPrioReadyQueue;
 		(*queueReference)->it = ((PFILA2)g_LowPrioReadyQueue)->first;
 		returnCode = OpSuccess;
 	}
