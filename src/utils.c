@@ -52,7 +52,8 @@ EOperationStatus SearchThreadFila2(PFILA2 queue, int content)
 
 // Searches queue for the pair where p1 == content
 // At the end, the it of the queue will be positioned on the found element, else it will be null
-EOperationStatus SearchFila2(PFILA2 queue, int content)
+// Optype == 1 when searching for p1 and == 2 when searching p2 
+EOperationStatus SearchFila2(PFILA2 queue, int content, int opType)
 {
 	// Operation status
 	EOperationStatus retStatus = OpUknownError;
@@ -68,15 +69,34 @@ EOperationStatus SearchFila2(PFILA2 queue, int content)
 			// Iterates through the queue
 			while ((queue->it != queue->last->next) && (found != true))
 			{
-				// If the p1 of the pair is equal to the content
-				if ((((pair*)queue->it->node)->p1 == content))
+				switch (opType)
 				{
-					found = true;
-				}
-				// If not found
-				if (!found)
-				{
-					NextFila2(queue);
+				case 1:
+					// If the p1 of the pair is equal to the content
+					if ((((pair*)queue->it->node)->p1 == content))
+					{
+						found = true;
+					}
+					// If not found
+					if (!found)
+					{
+						NextFila2(queue);
+					}
+					break;
+				case 2:
+					// If the p2 of the pair is equal to the content
+					if ((((pair*)queue->it->node)->p2 == content))
+					{
+						found = true;
+					}
+					// If not found
+					if (!found)
+					{
+						NextFila2(queue);
+					}
+					break;
+				default:
+					break;
 				}
 			}
 			// If the element was not found, then we set to null it

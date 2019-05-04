@@ -44,12 +44,9 @@ ETestStatus csignal_test()
 		thread->prio = ThreadHighPriority;
 		thread->state = PROCST_BLOQ;
 		thread->tid = i;
-		if ((AppendFila2(g_blockedQueue, thread) != 0) || (AppendFila2(pSem->fila, thread) != 0))
-		{
-			// nothing
-		}
+		AppendFila2(g_blockedQueue, thread);
+		AppendFila2(pSem->fila, thread);
 	}
-	// Test code
 
 	// Issues two signals
 	if ((csignal(pSem) != OpSuccess) || (csignal(pSem) != OpSuccess))
@@ -91,13 +88,14 @@ ETestStatus csignal_test()
 	// !!!  IMPORTANT !!!
 	// Needs to free the memory used always
 	// For each thread in the semaphore queue free itself
-	for (; pSem->fila->it != pSem->fila->last->next; NextFila2(pSem->fila))
+	while(pSem->fila->it != pSem->fila->last->next)
 	{
-		// Gets the current node
-		TCB_t* currThread = (TCB_t*)pSem->fila->it->node;
-
-		free(currThread);
+		FirstFila2(pSem->fila);
+		free(pSem->fila->it->node);
+		DeleteAtIteratorFila2(pSem->fila);
 	}
+	// Free queue
+	free(pSem->fila);
 
 	// Free semaphore
 	free(pSem);

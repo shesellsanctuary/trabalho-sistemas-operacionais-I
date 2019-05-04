@@ -232,10 +232,10 @@ EOperationStatus UnblockThreadWaitingForThis(int tidOfExecutingThread)
 	EOperationStatus returnCode = OpSuccess;
 
 	// Searches for the thread
-	if ((SearchFila2(g_cjoinQueue, tidOfExecutingThread) == OpSuccess) && (g_cjoinQueue->it != NULL))
+	if ((SearchFila2(g_cjoinQueue, tidOfExecutingThread, 1) == OpSuccess) && (g_cjoinQueue->it != NULL))
 	{
 		// TID of thread is in the iterator of the queue, we should change its state and move it to the ready queue
-		if ((SearchThreadFila2(g_blockedQueue, (int)g_cjoinQueue->it->node) == OpSuccess) && (g_blockedQueue->it != NULL))
+		if ((SearchThreadFila2(g_blockedQueue, ((pair*)g_cjoinQueue->it->node)->p2) == OpSuccess) && (g_blockedQueue->it != NULL))
 		{
 			// Updates the state
 			((TCB_t*)g_blockedQueue->it->node)->state = PROCST_APTO;
@@ -265,7 +265,7 @@ EOperationStatus UnblockThreadWaitingForThis(int tidOfExecutingThread)
 void threadEndFunction()
 {
 	// Searches the cjoin queue to unblock the threads that were waiting for the finished thread
-	if (UnblockThreadWaitingForThis(((TCB_t*)g_executingThread->first)->tid) != OpSuccess)
+	if (UnblockThreadWaitingForThis(((TCB_t*)g_executingThread->first->node)->tid) != OpSuccess)
 	{
 		perror("Error while trying to unblock thread.");
 	}
@@ -279,5 +279,8 @@ void threadEndFunction()
 	dispatch();
 
 	// Set next executing thread context
-	setcontext(&((TCB_t*)g_executingThread->first)->context);
+	if (GetSizeFila2(g_executingThread) > 0)
+	{
+		setcontext(&((TCB_t*)g_executingThread->first->node)->context);
+	}
 }
