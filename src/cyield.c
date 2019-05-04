@@ -33,28 +33,27 @@ cyield(void)
 
 	if (initializationCode == OpSuccess)
 	{
-		TCB_t* thread = (TCB_t*)g_executingThread->first->node;
 		// Changes thread state from executing to ready
-        thread->state = PROCST_APTO;
-		// Adds thread to respective ready queue and starts executing iterator
-		if ((appendThreadToReadyQueue(thread) != 0) || (FirstFila2(g_executingThread) != 0))
+		TCB_t* thread = (TCB_t*)g_executingThread->first->node;
+		thread->state = PROCST_APTO;
+
+		// Starts executing iterator and deletes thread from executing queue
+		if ((FirstFila2(g_executingThread) == OpSuccess) && (DeleteAtIteratorFila2(g_executingThread) == OpSuccess))
 		{
-			returnCode = OpUknownError;
-		}
-		else
-		{
-			printf("hiii\n");
-			// Deleting thread from executing queue
-			if (DeleteAtIteratorFila2(g_executingThread) == 0)
-			{	// Call dispatcher to put next thread on execution
-				printf("deleted thread from exec\n");
-			    dispatch();
+			// First dispatch next thread to execution then adds the old thread to respective ready queue
+			if ((dispatch() == OpSuccess) && (appendThreadToReadyQueue(thread) == OpSuccess))
+			{	
+				// Call dispatcher to put next thread on execution
 				returnCode = OpSuccess;
 			}
 			else
 			{
-				returnCode = OpDeleteError;
+				returnCode = OpAppendError;
 			}
+		}
+		else
+		{
+			returnCode = OpDeleteError;
 		}
 	}
 

@@ -22,7 +22,7 @@ int ccreate(void *(*start)(void *), void *arg, int prio)
     {
         TCB_t *new_thread = malloc(sizeof(TCB_t));
 
-        new_thread->tid = ++g_numOfThreads;
+        new_thread->tid = g_numOfThreads++;
         new_thread->state = PROCST_APTO;
         new_thread->prio = prio;
 

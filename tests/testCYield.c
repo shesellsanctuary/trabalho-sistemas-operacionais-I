@@ -11,12 +11,8 @@
 
 ETestStatus cyield_test()
 {
-    printf("going to initialize\n");
     // Initializes library
 	initialize();
-    printf("initialized\n");
-    TCB_t* thread = (TCB_t*)g_executingThread->first->node;
-    printf("main? %d\n", thread->tid);
 
     // Test status
     ETestStatus testStatus = TestSuccess;
@@ -28,18 +24,16 @@ ETestStatus cyield_test()
     getcontext(context);
     x->context = *context;
     x->prio = ThreadHighPriority;
-    x->state = PROCST_EXEC;
-    x->tid = 1;
-
+    x->state = PROCST_APTO;
+    x->tid = g_numOfThreads++;
+	
+	appendThreadToReadyQueue(x);
     
-    if (AppendFila2(g_executingThread, x) != 0)
-    {
-        //nothing
-    }
-    if (cyield() != OpSuccess)
+	// Main thread must yield first
+    if ((cyield() != OpSuccess) || (cyield() != OpSuccess))
     {
         testStatus = TestError;
-        printf("fail yielding\n");
+        perror("Fail yielding.\n");
     }
     else
     {
@@ -47,12 +41,12 @@ ETestStatus cyield_test()
         if (x->state != PROCST_APTO)
         {
             testStatus = TestError;
-            printf("wrong new state \n");
+            perror("Wrong new state.\n");
         }
         // Thread should be in its respective ready queue
-        if (SearchThreadFila2(g_HighPrioReadyQueue, x->tid) != 0)
+        if (SearchThreadFila2(g_HighPrioReadyQueue, x->tid) != OpSuccess)
         {
-            printf("thread not found in ready queue\n");
+            perror("Thread not found in ready queue.\n");
             testStatus = TestError;
         }
     }
