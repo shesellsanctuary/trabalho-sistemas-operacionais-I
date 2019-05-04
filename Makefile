@@ -51,6 +51,7 @@ executable: $(OBJ)
 # To use when finishing the assignment
 delivery: OBJ += ./bin/support.o
 delivery: $(OBJ)
+	@mkdir -p $(LIB_DIR)
 	@echo "Delivery Mode"
 	@ar crs $(LIB_DIR)libcthread.a $(OBJ)
 
