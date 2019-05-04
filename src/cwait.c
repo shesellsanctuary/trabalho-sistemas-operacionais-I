@@ -38,7 +38,7 @@ cwait(csem_t *sem)
 		{
 			// Check if resource is free
 			// If count is <= 0 put thread on blocked state and on resource wait list 
-			if (sem->count <=0)
+			if (sem->count <= 0)
 			{
 				printf("no more resource\n");
 				TCB_t* thread = (TCB_t*)g_executingThread->first->node;

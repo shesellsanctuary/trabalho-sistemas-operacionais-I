@@ -7,6 +7,7 @@
 #include "testCIdentify.h"
 #include "testCWait.h"
 #include "testCYield.h"
+#include "testCJoin.h"
 #include "sourceExample.h"
 
 ETestStatus runAllTests()
@@ -85,6 +86,22 @@ ETestStatus runAllTests()
 	printf("cyield_test:\t");
 	// Run the test
 	currentTestStatus = cyield_test();
+	// Check if test runned successfully
+	if (currentTestStatus != TestSuccess)
+	{
+		overallTestStatus -= TestError;
+		printf("FAILED\n");
+	}
+	else
+	{
+		printf("SUCCESS\n");
+	}
+
+	// cyield test
+	// Currently running test
+	printf("cjoin_test:\t");
+	// Run the test
+	currentTestStatus = cjoin_test();
 	// Check if test runned successfully
 	if (currentTestStatus != TestSuccess)
 	{

@@ -48,6 +48,9 @@ ETestStatus csem_init_test()
 
 	// !!!  IMPORTANT !!!
 	// Needs to free the memory used always
+	// Free the queue
+	free(pSem->fila);
+	// Free the semaphore
 	free(pSem);
 
 	return testStatus;

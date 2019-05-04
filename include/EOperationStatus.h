@@ -11,7 +11,8 @@ typedef enum EOperationStatus
 	OpDeleteError = -4, // Error deleting element from list
 	OpInvalidPriorityError = -5, // Invalid thread priority found
 	OpAppendError = -6, // Could not append to queue
-	OpInvalidPrio = -7 // Invalid priority
+	OpInvalidPrio = -7, // Invalid priority
+	OpThreadDoNotExist = -8 // Searched tid not found
 } EOperationStatus;
 
 #endif // !EOPERATIONSTATUS_H
