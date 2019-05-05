@@ -2,7 +2,7 @@
 /*
  *	Programa de exemplo de uso da biblioteca cthread
  *
- *	Versão 1.0 - 14/04/2016
+ *	Versï¿½o 1.0 - 14/04/2016
  *
  *	Sistemas Operacionais I - www.inf.ufrgs.br
  *
@@ -13,12 +13,19 @@
 #include <stdio.h>
 
 void* func0(void *arg) {
-	printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
+	printf("Eu sou a thread ID0 imprimindo \n");
+	cwait((csem_t*)arg);
+	printf("Peguei recurso e vou liberar a cpu\n");
+	cyield();
+	printf("Eu sou a thread ID0 depois do cyield\n");
+	csignal((csem_t*)arg);
 	return;
 }
 
 void* func1(void *arg) {
-	printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
+	printf("Eu sou a thread ID1 imprimindo\n");
+	cwait((csem_t*)arg);
+	return;
 }
 
 int main(int argc, char *argv[]) {
@@ -26,10 +33,20 @@ int main(int argc, char *argv[]) {
 	int	id0, id1;
 	int i;
 
-	id0 = ccreate(func0, (void *)&i, 0);
-	id1 = ccreate(func1, (void *)&i, 0);
+	// Pointer to semaphore
+	// Allocates memory
+	csem_t* pSem = (csem_t*)malloc(sizeof(csem_t));
 
-	printf("Eu sou a main após a criação de ID0 e ID1\n");
+	// Number of available slots for semaphore
+	// Constant, do not change during execution of the test
+	int c_count = 1;
+
+	csem_init(pSem, c_count);
+
+	id0 = ccreate(func0, (void *)&pSem, 1);
+	id1 = ccreate(func1, (void *)&pSem, 1);
+
+	printf("Eu sou a main apï¿½s a criaï¿½ï¿½o de ID0 e ID1\n");
 
 	cjoin(id0);
 	cjoin(id1);
