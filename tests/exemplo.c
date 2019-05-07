@@ -51,8 +51,8 @@ int mainExample() {
 
 	csem_init(pSem, c_count);
 
-	id0 = ccreate(func0, (void *)&pSem, 1);
-	id1 = ccreate(func1, (void *)&pSem, 1);
+	id0 = ccreate(func0, (void *)pSem, 1);
+	id1 = ccreate(func1, (void *)pSem, 1);
 
 	printf("Eu sou a main ap�s a cria��o de ID0 e ID1\n");
 
