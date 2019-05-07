@@ -7,7 +7,15 @@
  *	Sistemas Operacionais I - www.inf.ufrgs.br
  *
  */
-
+#include <stdlib.h>
+#include <ucontext.h>
+#include "cthread.h"
+#include "scheduler.h"
+#include "cdata.h"
+#include "ETestStatus.h"
+#include "EOperationStatus.h"
+#include "EThreadPriority.h"
+#include "utils.h"
 #include "../include/support.h"
 #include "../include/cthread.h"
 #include <stdio.h>
@@ -19,19 +27,19 @@ void* func0(void *arg) {
 	cyield();
 	printf("Eu sou a thread ID0 depois do cyield\n");
 	csignal((csem_t*)arg);
-	return;
+	return 0;
 }
 
 void* func1(void *arg) {
 	printf("Eu sou a thread ID1 imprimindo\n");
 	cwait((csem_t*)arg);
-	return;
+	printf("Tentei pegar recurso e devo estar bloqueada\n");
+	return 0;
 }
 
-int main(int argc, char *argv[]) {
+int mainExample() {
 
 	int	id0, id1;
-	int i;
 
 	// Pointer to semaphore
 	// Allocates memory
@@ -52,5 +60,5 @@ int main(int argc, char *argv[]) {
 	cjoin(id1);
 
 	printf("Eu sou a main voltando para terminar o programa\n");
+	return 0;
 }
-

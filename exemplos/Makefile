@@ -31,7 +31,3 @@ series: series.c $(LIB_DIR)/libcthread.a
 	
 clean:
 	rm -rf exemplo mandel teste_vetor barbeiro filosofos prodcons series *.o *~
-
-
-
-

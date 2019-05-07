@@ -3,11 +3,12 @@
 // Here we call the runAllTests function defined in testMain
 #include <stdio.h>
 #include "testMain.h"
+#include "exemplo.h"
 
 int main(int argc, char* argv[])
 {
 	// Just call the run all tests and if it returns != there's error
-	return runAllTests();
+	return mainExample();
 }
 #else
 #include <stdio.h>
